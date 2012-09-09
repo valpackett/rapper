@@ -16,6 +16,9 @@ class Test(unittest.TestCase):
         r |should_be.equal_to| d
         self.p.count() |should_be.equal_to| 1
 
+    def test_read_fail(self):
+        self.p.read_one({"name": "nothing"}) |should_be.equal_to| None
+
     def test_skip(self):
         for i in range(0, 10):
             self.p.create({"i": str(i)})

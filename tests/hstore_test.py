@@ -3,7 +3,9 @@ import t
 import os
 import psycopg2
 from should_dsl import *
+from datetime import datetime
 from rapper import HstorePersistence
+from rapper.hstore import untypeify
 
 
 class HstoreTest(t.Test):
@@ -20,3 +22,9 @@ class HstoreTest(t.Test):
     def tearDown(self):
         self.c.cursor().execute("drop table test")
         self.c.commit()
+
+    def test_untypeify(self):
+        d = datetime.now()
+        untypeify({"id": 1, "di": {"d": d}}) |should_be.equal_to| {
+            "id": "1", "di": {"d": d.isoformat()}
+        }

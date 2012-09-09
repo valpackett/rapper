@@ -18,7 +18,7 @@ class MongoPersistence(Persistence):
         d = self.db.find_one(query, **kwargs)
         if d:
             if not "fields" in kwargs:
-                kwargs["fields"] = ["id"]
+                kwargs["fields"] = ["_id"]
             if "_id" in kwargs["fields"]:
                 d["_id"] = str(d["_id"])
             else:
@@ -42,10 +42,7 @@ class MongoPersistence(Persistence):
         return True
 
     def update(self, query, params):
-        orig = self.read_one(query)
-        if not orig:
-            return False
-        self.db.update(query, dict(orig.items() + params.items()))
+        self.db.update(query, {"$set": params})
         return True
 
     def delete(self, query):
