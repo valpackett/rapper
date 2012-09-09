@@ -1,0 +1,5 @@
+distribute==0.6.27
+nose==1.1.2
+psycopg2==2.4.5
+pymongo==2.2
+should-dsl==2.0a4
