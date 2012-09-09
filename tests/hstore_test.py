@@ -10,7 +10,7 @@ class HstoreTest(t.Test):
 
     def setUp(self):
         connstr = "host=127.0.0.1 port=5432 dbname=rapper_test"
-        if os.environ["CI"]:
+        if os.environ.get("CI"):
             connstr += " username=postgres"
         self.c = psycopg2.connect(connstr)
         self.c.cursor().execute("create table test (id serial primary key, data hstore)")

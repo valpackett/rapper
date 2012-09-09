@@ -19,6 +19,7 @@ class EmbeddedPersistence(Persistence):
     def create(self, data):
         self.l.append(data)
         self.parent.update(self.parent_query, {self.field: self.l})
+        return True
 
     def read_many(self, query, fields=None, skip=0, limit=0):
         return MemoryPersistence(self.l).read_many(query, fields, skip, limit)
@@ -27,27 +28,26 @@ class EmbeddedPersistence(Persistence):
         return MemoryPersistence(self.l).read_one(query, fields)
 
     def _replace_parent(self, mp):
-        data = self.parent_inst
-        data[self.field] = mp.db
-        self.parent.update(self.parent_query, data)
+        self.l = mp.db
+        self.parent.update(self.parent_query, {self.field: self.l})
 
     def replace(self, query, params):
         mp = MemoryPersistence(self.l)
         r = mp.replace(query, params)
         self._replace_parent(mp)
-        return r
+        return True
 
     def update(self, query, params):
         mp = MemoryPersistence(self.l)
         r = mp.update(query, params)
         self._replace_parent(mp)
-        return r
+        return True
 
     def delete(self, query):
         mp = MemoryPersistence(self.l)
         r = mp.delete(query)
         self._replace_parent(mp)
-        return r
+        return True
 
     def count(self):
-        return len(self.l)
+        return len(self.parent.read_one(self.parent_query)[self.field])
